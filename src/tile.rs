@@ -71,7 +71,7 @@ pub struct Layer {
 /// # fn main() -> Result<(), Error> {
 ///       use mvt::{GeomEncoder,GeomType,Tile,Transform};
 ///       let mut tile = Tile::new(4096);
-///       let layer = tile.create_layer("First Layer");
+///       let mut layer = tile.create_layer("First Layer");
 ///       let geom_data = GeomEncoder::new(GeomType::Point, Transform::new())
 ///                                   .point(1.0, 2.0)
 ///                                   .point(7.0, 6.0)
@@ -80,13 +80,13 @@ pub struct Layer {
 ///       // ...
 ///       // add any tags or ID to the feature
 ///       // ...
-///       let layer = feature.into_layer();
+///       feature.into_layer();
 /// #     Ok(())
 /// # }
 /// ```
-pub struct Feature {
+pub struct Feature<'a> {
     feature: Tile_Feature,
-    layer: Layer,
+    layer: &'a mut Layer,
 }
 
 impl Tile {
@@ -185,7 +185,7 @@ impl Layer {
     /// Create a new feature, giving it ownership of the layer.
     ///
     /// * `geom_data` Geometry data (consumed by this method).
-    pub fn into_feature(self, geom_data: GeomData) -> Feature {
+    pub fn into_feature(&mut self, geom_data: GeomData) -> Feature {
         let mut feature = Tile_Feature::new();
         feature.set_field_type(match geom_data.geom_type() {
             GeomType::Point => Tile_GeomType::POINT,
@@ -226,11 +226,10 @@ impl Layer {
     }
 }
 
-impl Feature {
+impl<'a> Feature<'a> {
     /// Complete the feature, returning ownership of the layer.
-    pub fn into_layer(mut self) -> Layer {
+    pub fn into_layer(self) {
         self.layer.layer.mut_features().push(self.feature);
-        self.layer
     }
 
     /// Set the feature ID.

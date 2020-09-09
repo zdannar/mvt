@@ -17,7 +17,7 @@
 //!
 //! fn main() -> Result<(), Error> {
 //!     let mut tile = Tile::new(4096);
-//!     let layer = tile.create_layer("First Layer");
+//!     let mut layer = tile.create_layer("First Layer");
 //!     let b = GeomEncoder::new(GeomType::Linestring, Transform::new())
 //!                         .point(0.0, 0.0)
 //!                         .point(1024.0, 0.0)
@@ -28,14 +28,15 @@
 //!     let mut feature = layer.into_feature(b);
 //!     feature.set_id(1);
 //!     feature.add_tag_string("key", "value");
-//!     let layer = feature.into_layer();
+//!     feature.into_layer();
 //!     tile.add_layer(layer)?;
 //!     let data = tile.to_bytes()?;
 //!     println!("encoded {} bytes: {:?}", data.len(), data);
 //!     Ok(())
 //! }
 //! ```
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 
 mod encoder;
 mod error;
