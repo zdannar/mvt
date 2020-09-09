@@ -87,8 +87,6 @@ pub struct Layer {
 pub struct Feature {
     feature: Tile_Feature,
     layer: Layer,
-    num_keys: usize,
-    num_values: usize,
 }
 
 impl Tile {
@@ -132,7 +130,7 @@ impl Tile {
             .vec_tile
             .get_layers()
             .iter()
-            .any({ |n| n.get_name() == layer.layer.get_name() })
+            .any(|n| n.get_name() == layer.layer.get_name())
         {
             Err(Error::DuplicateName())
         } else {
@@ -188,8 +186,6 @@ impl Layer {
     ///
     /// * `geom_data` Geometry data (consumed by this method).
     pub fn into_feature(self, geom_data: GeomData) -> Feature {
-        let num_keys = self.layer.get_keys().len();
-        let num_values = self.layer.get_values().len();
         let mut feature = Tile_Feature::new();
         feature.set_field_type(match geom_data.geom_type() {
             GeomType::Point => Tile_GeomType::POINT,
@@ -200,8 +196,6 @@ impl Layer {
         Feature {
             feature,
             layer: self,
-            num_keys,
-            num_values,
         }
     }
 
@@ -239,19 +233,15 @@ impl Feature {
         self.layer
     }
 
-    /// Get the layer, abandoning the feature.
-    pub fn layer(mut self) -> Layer {
-        // Reset key/value lengths
-        self.layer.layer.mut_keys().truncate(self.num_keys);
-        self.layer.layer.mut_values().truncate(self.num_values);
-        self.layer
-    }
-
     /// Set the feature ID.
     pub fn set_id(&mut self, id: u64) {
         let layer = &self.layer.layer;
-        if layer.get_features().iter().any({ |f| f.get_id() == id }) {
-            warn!("Duplicate feature ID ({}) in layer {}", id, layer.get_name());
+        if layer.get_features().iter().any(|f| f.get_id() == id) {
+            warn!(
+                "Duplicate feature ID ({}) in layer {}",
+                id,
+                layer.get_name()
+            );
         }
         self.feature.set_id(id);
     }
