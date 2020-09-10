@@ -3,12 +3,6 @@ This is a temporary fork of https://github.com/DougLau/mvt.  I changed some
 lifetimes and inner workings of the crate.  After spending some more time 
 with it, I am looking at sending a PR to the base repository.
 
-There is currently also another issue where you need to downgrade your 
-protobuf crate for this code to compile.  Run the following to address
-the issue.
-
-```cargo update -p protobuf --precise 2.8.1```
-
 # mvt
 A library for encoding [mapbox vector tiles](https://github.com/mapbox/vector-tile-spec)
 (MVT).  Version 2.1 of the standard is supported.
@@ -34,8 +28,10 @@ fn main() -> Result<(), Error> {
     let mut feature = layer.into_feature(b);
     feature.set_id(1);
     feature.add_tag_string("key", "value");
+
     // Changed to address move issue.
     let layer = feature.into_layer();
+
     tile.add_layer(layer)?;
     let data = tile.to_bytes()?;
     println!("encoded {} bytes: {:?}", data.len(), data);
@@ -78,8 +74,8 @@ fn main() -> Result<(), Error> {
         fcount += 1;
         feature.set_id(fcount);
         feature.add_tag_string("name", &pd.name);
-        // TODO: This could be done when the feature goes out of 
-        // scope by implimenting the drop trait.
+
+        // Closes/Commits the feature to the layer.
         feature.into_layer();
     }
     tile.add_layer(layer)?;
