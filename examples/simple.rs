@@ -1,4 +1,5 @@
 use mvt::{Error, GeomEncoder, GeomType, Tile, Transform};
+//extern crate slippy_map_tilenames as smt;
 
 struct SomePointData {
     name: String,
@@ -10,6 +11,19 @@ impl SomePointData {
     fn new(name: String, x: f64, y: f64) -> Self {
         SomePointData { name, x, y }
     }
+
+    /*
+    fn from_latlon(&self, zoom: u8) -> Self {
+        // If you add crate slippy_map_tilenames, you can use lat/lon EPSG 4326
+        // Points, you can get the appropriate tile values.
+        let (x, y) = smt::lonlat2tile(self.x, self.y, zoom);
+        SomePointData {
+            name: self.name.clone(),
+            x: x.into(),
+            y: y.into(),
+        }
+    }
+    */
 }
 
 fn main() -> Result<(), Error> {
