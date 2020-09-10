@@ -1,7 +1,13 @@
 # NOTE: 
-This is a temparary fork of https://github.com/DougLau/mvt.  I changed some 
+This is a temporary fork of https://github.com/DougLau/mvt.  I changed some 
 lifetimes and inner workings of the crate.  After spending some more time 
 with it, I am looking at sending a PR to the base repository.
+
+There is currently also another issue where you need to downgrade your 
+protobuf crate for this code to compile.  Run the following to address
+the issue.
+
+```cargo update -p protobuf --precise 2.8.1```
 
 # mvt
 A library for encoding [mapbox vector tiles](https://github.com/mapbox/vector-tile-spec)
