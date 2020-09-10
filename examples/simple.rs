@@ -1,4 +1,4 @@
-use mvt::{Error, GeomEncoder, GeomType, Tile, Transform};
+use mvt::{GeomEncoder, GeomType, Tile, Transform};
 //extern crate slippy_map_tilenames as smt;
 
 struct SomePointData {
@@ -26,13 +26,7 @@ impl SomePointData {
     */
 }
 
-fn main() -> Result<(), Error> {
-    let point_data = vec![
-        SomePointData::new("darth".to_string(), -1f64, -1f64),
-        SomePointData::new("kylo".to_string(), -1f64, -0f64),
-        SomePointData::new("luke".to_string(), 1f64, 1f64),
-    ];
-
+fn make_tile(point_data: Vec<SomePointData>) -> Result<Vec<u8>, mvt::Error> {
     let mut tile = Tile::new(4096);
     let mut layer = tile.create_layer("First Layer");
 
@@ -50,6 +44,17 @@ fn main() -> Result<(), Error> {
     tile.add_layer(layer)?;
 
     let data = tile.to_bytes()?;
-    println!("encoded {} bytes: {:?}", data.len(), data);
+    Ok(data)
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let point_data = vec![
+        SomePointData::new("darth".to_string(), -1f64, -1f64),
+        SomePointData::new("kylo".to_string(), -1f64, -0f64),
+        SomePointData::new("luke".to_string(), 1f64, 1f64),
+        SomePointData::new("yoda".to_string(), 4f64, 1f64),
+    ];
+    let bdata = make_tile(point_data)?;
+    println!("Bytes: {:?}", bdata);
     Ok(())
 }
